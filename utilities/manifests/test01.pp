@@ -54,37 +54,52 @@ class utilities::test01 {
 ##############################################################################################################
 ####################### execs in sequence WORKS ##############################################################
 ##############################################################################################################
-$cmdpath = [ "/bin", "/usr/bin" ]
-
-exec { 'something 1' :
-	path 	=> $cmdpath,
-	command	=> "touch /tmp/file1",
-#	onlyif	=> '/usr/bin/test -f /tmp/orange.txt'  		# runs only if a file is present
-	onlyif  => '/bin/rpm -qa | grep dialog'			# runs only if a package is installed
-
-}~>
-exec { 'something 2' :						# runs only if something 1 works
-	path 	=> $cmdpath,
-	command	=> "touch /tmp/file2",
-	refreshonly	=> true,
-}~>
-exec { 'something 3' :						# runs only if something 2 works
-	path 	=> $cmdpath,
-	command	=> "touch /tmp/file3",
-	refreshonly	=> true,
-}
+#$cmdpath = [ "/bin", "/usr/bin" ]
+#
+#exec { 'something 1' :
+#	path 	=> $cmdpath,
+#	command	=> "touch /tmp/file1",
+##	onlyif	=> '/usr/bin/test -f /tmp/orange.txt'  		# runs only if a file is present
+#	onlyif  => '/bin/rpm -qa | grep dialog'			# runs only if a package is installed
+#
+#}~>
+#exec { 'something 2' :						# runs only if something 1 works
+#	path 	=> $cmdpath,
+#	command	=> "touch /tmp/file2",
+#	refreshonly	=> true,
+#}~>
+#exec { 'something 3' :						# runs only if something 2 works
+#	path 	=> $cmdpath,
+#	command	=> "touch /tmp/file3",
+#	refreshonly	=> true,
+#}
 ##############################################################################################################
 
-
-
-
+##############################################################################################################
+##### add a line to a file - cool, but it requires puppetlabs-stdlib  #########################
+##############################################################################################################
+#file { '/tmp/orange.txt' :      	#  just add a line
+#	ensure => present,
+#}~>
+#file_line { 'change orange' :
+#	path 	=> '/tmp/orange.txt',
+#	line	=> 'This is a new line',
+#}
+############################################################
+file { '/tmp/orange.txt' :		#  replace a line
+	ensure => present,
+}~>
+file_line { 'change orange' :
+	path 	=> '/tmp/orange.txt',
+	line	=> 'This is a new line',
+	match	=> 'two',
+	multiple	=> true			# needed if more than one line matches
+}
+###############################################################################################################
 
 
 
 
 
 }
-
-
-
 
