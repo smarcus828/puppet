@@ -86,20 +86,31 @@ class utilities::test01 {
 #	line	=> 'This is a new line',
 #}
 ############################################################
-file { '/tmp/orange.txt' :		#  replace a line
-	ensure => present,
-}~>
-file_line { 'change orange' :
-	path 	=> '/tmp/orange.txt',
-	line	=> 'This is a new line',
-	match	=> 'two',
-	multiple	=> true			# needed if more than one line matches
-}
+#file { '/tmp/orange.txt' :		#  replace a line
+#	ensure => present,
+#}~>
+#file_line { 'change orange' :
+#	path 	=> '/tmp/orange.txt',
+#	line	=> 'This is a new line',
+#	match	=> 'two',
+#	multiple	=> true			# needed if more than one line matches
+#}
 ###############################################################################################################
 
-
-
-
-
+exec { "check_presence" :
+       command => '/bin/true',
+       onlyif  => '/usr/bin/test -f /tmp/orange.txt',
+       #before => Package['dialog'],
+	#command => '/bin/true',
+	#unless => '/usr/bin/test ! -f /tmp/orange.txt',
+       #command  => '/usr/bin/test -f /tmp/orange.txt',  # worked but caused an err
+}~>
+package { 'dialog' :
+       #require => Exec["check_presence"],
+       ensure  => present,
 }
+
+
+
+}  # trailing brace - dont erase
 
